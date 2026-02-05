@@ -1,84 +1,55 @@
 plugins {
-	id 'eclipse'
-	id 'java'
-	id 'signing'
-	id 'maven-publish'
+    id 'eclipse'
+    id 'java'
+    id "com.vanniktech.maven.publish" version "0.28.0"
 }
 
 group = 'dev.array21'
 version = '1.0.1'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'com.google.code.gson:gson:2.8.6'
-	implementation 'dev.array21:httplib:1.2.2'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'dev.array21:httplib:1.2.2'
 }
 
-javadoc.options.addStringOption('Xdoclint:none', '-quiet')
-
-task javadocJar(type: Jar) {
-	classifier = 'javadoc'
-	from javadoc
+tasks.withType(Javadoc).configureEach {
+    options.addStringOption('Xdoclint:none', '-quiet')
 }
 
-task sourcesJar(type: Jar) {
-	classifier = 'sources'
-	from sourceSets.main.allSource
-}
+mavenPublishing {
+    coordinates("dev.array21", "espocrm-api-client", version)
 
-publishing {
-	repositories {
-		maven {
-			name = "ossrh"
-			url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-			credentials {
-				username = findProperty('ossrhUsername')
-				password = findProperty('ossrhPassword')
-			}
-		}
-	}
+    pom {
+        name = 'EspoCRM API Client'
+        description = 'EspoCRM API client for Java'
+        url = 'https://github.com/TobiasDeBruijn/espocrm-java'
+        
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+        
+        developers {
+            developer {
+                id = 'tobiasdebruijn'
+                name = 'Tobias de Bruijn'
+                email = 't.debruijn@array21.dev'
+            }
+        }
 
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-			artifact sourcesJar
-			artifact javadocJar
-			
-			pom {
-				name = 'EspoCRM API Client'
-				artifactId = 'espocrm-api-client'
-				packaging = 'jar'
-				description = 'EspoCRM API client for Java'
-				url = 'https://github.com/TobiasDeBruijn/espocrm-java'
-			
-				scm {
-					connection = 'scm:git:git://github.com/TobiasDeBruijn/espocrm-java.git'
-					developerConnection =  'scm:git:ssh://github.com:TobiasDeBruijn/espocrm-java.git'
-					url = 'https://github.com/TobiasDeBruijn/espocrm-java/tree/master'
-				}
-		
-				licenses {
-					license {
-						name =  'The Apache License, Version 2.0'
-						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-					}
-				}
-		
-				developers {
-					developer {
-						id = 'tobiasdebruijn'
-						name = 'Tobias de Bruijn'
-						email = 't.debruijn@array21.dev'
-					}
-				}
-			}
-		}
-	}
-}
+        scm {
+            connection = 'scm:git:git://github.com/TobiasDeBruijn/espocrm-java.git'
+            developerConnection = 'scm:git:ssh://github.com:TobiasDeBruijn/espocrm-java.git'
+            url = 'https://github.com/TobiasDeBruijn/espocrm-java/tree/master'
+        }
+    }
 
-signing {
-	sign publishing.publications.mavenJava
+    publishToMavenCentral("CENTRAL_PORTAL")
+    signAllPublications()
 }
