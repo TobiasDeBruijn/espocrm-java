@@ -83,7 +83,7 @@ public class EspoApiClient {
 			headers.put("X-Hmac-Authorization", getHmacAuthorization(method, action));
 		
 		} else if(this.apiKey != null && this.secretKey == null) {
-			headers.put("X-Api_key", this.apiKey);
+			headers.put("X-Api-Key", this.apiKey);
 		}
 		
 		ResponseObject responseObject;
